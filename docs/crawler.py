@@ -80,8 +80,8 @@ def add_inspections(line):
 
     evids = evid_searcher.findall(line)
     for evid in evids:
-        if int(evid) > 6000:
-            continue
+        # if int(evid) > 9000:
+        #     continue
         all_inspections.add(evid, current_type, current_date, current_isnew)
 
 def process_page(url):
@@ -106,24 +106,24 @@ def process_page(url):
 def insp_num_to_text(num):
     num = int(num)
     if num == 0:
-        return "PÚ"
+        return "🟩"
     elif num == 1:
-        return "PO"
+        return "🟨"
     elif num == 2:
-        return "GO"
+        return "🟥"
     elif num == 3:
-        return "MO"
+        return "💥"
     elif num == 4:
-        return "Dodán"
+        return "🆕"
     elif num == 5:
-        return "Předán"
+        return "🔜"
     elif num == 6:
-        return "Odstaven"
+        return "🪴"
     elif num == 7:
-        return "Odvezen"
+        return "↩️"
 
 def print_frontmatter(f, evid):
-    f.write(f"---\nlayout: page\ntitle: {evid}\npermalink: /data/{evid}\n---\n")
+    f.write(f"---\nlayout: default\ntitle: {evid}\npermalink: /data/{evid}\n---\n")
 
 def print_table_header(f):
     for m in range(0,13):
@@ -136,9 +136,7 @@ def print_table_header(f):
 def generate_md_page(evid, inspections):
     global start_year, end_year
     insp_list = list(reversed(inspections.inspections))
-    if (int(evid) == 5527):
-        print(insp_list)
-    with open(f"docs/data/{evid}.markdown", "w") as f:
+    with open(f"data/{evid}.markdown", "w") as f:
         print_frontmatter(f, evid)
         print_table_header(f)
         type, date, isnew = insp_list[0]
@@ -148,11 +146,10 @@ def generate_md_page(evid, inspections):
                 f.write("|")
                 first = True
                 while date.month == m and date.year == y:
-                    if not first:
-                        f.write(", ")
-                    f.write(f"{insp_num_to_text(type)}")
+                    if first:
+                        f.write(f"{insp_num_to_text(type)}")
                     if isnew:
-                        f.write(" (new)")
+                        f.write("❗️")
                     insp_list = insp_list[1:]
                     first = False
                     if not insp_list:
@@ -163,12 +160,14 @@ def generate_md_page(evid, inspections):
 
 def generate_index_page(evids):
     evid_nums = []
-    with open("docs/index.markdown", "w") as f:
+    with open("index.markdown", "w") as f:
         f.write("---\nlayout: home\n---\n")
         for e in evids:
             evid_nums.append(int(e))
         evid_nums = sorted(evid_nums)
-        for e in evid_nums:
+        for ix, e in enumerate(evid_nums):
+            if int(e)//100 > int(evid_nums[ix-1])//100:
+                f.write("\n")
             f.write(f"[{e}](data/{e})\n")
 
 urls = []
