@@ -52,9 +52,12 @@ end_year = 2026
 def set_date(line):
     global current_date
     date = date_searcher.search(line)
-    month = date[1]
-    year = date[2]
-    current_date = Date(month, year)
+    if not date:
+        current_date = Date(7, 2012)
+    else:
+        month = date[1]
+        year = date[2]
+        current_date = Date(month, year)
 
 def add_inspections(line):
     global all_inspections, current_isnew, current_date, evid_searcher
@@ -148,8 +151,8 @@ def generate_md_page(evid, inspections):
                 while date.month == m and date.year == y:
                     if first:
                         f.write(f"{insp_num_to_text(type)}")
-                    if isnew:
-                        f.write("❗️")
+                        if isnew:
+                            f.write("❗️")
                     insp_list = insp_list[1:]
                     first = False
                     if not insp_list:
