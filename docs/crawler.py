@@ -83,8 +83,6 @@ def add_inspections(line):
 
     evids = evid_searcher.findall(line)
     for evid in evids:
-        # if int(evid) > 9000:
-        #     continue
         all_inspections.add(evid, current_type, current_date, current_isnew)
 
 def process_page(url):
